@@ -1,7 +1,7 @@
 import yfinance as yf, pandas as pd, pandas_market_calendars as mcal
 
 nyse = mcal.get_calendar('NYSE')
-benchmark = 'TSLA'
+benchmark = 'SPY'
 
 today = pd.Timestamp.today()
 start_date = today - pd.Timedelta(days=15)
