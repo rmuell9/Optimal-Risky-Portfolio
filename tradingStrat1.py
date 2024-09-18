@@ -1,4 +1,4 @@
-import yfinance as yf, pandas as pd, pandas_market_calendars as mcal, numpy as np
+import yfinance as yf, pandas as pd, pandas_market_calendars as mcal, numpy as np, re
 
 from scipy import stats
 from scipy.stats import f
@@ -9,6 +9,10 @@ start_date = today - pd.Timedelta(days=15)
 schedule = nyse.schedule(start_date = start_date, end_date = today)
 last_10_trading_days = schedule.index[-11:]
 
+def clean_tickers(ticker_list):
+    cleaned_tickers = [ticker.replace('.', '-') for ticker in ticker_list if isinstance(ticker, str) and re.match("^[A-Z0-9]+$", ticker)]
+    return cleaned_tickers
+
 benchmark = 'SPY'
 
 SPY = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
@@ -16,6 +20,11 @@ tables = pd.read_html(SPY)
 SPY_table = tables[0]
 tickers = SPY_table['Symbol'].tolist()
 tickers = [ticker.replace('.', '-') for ticker in tickers]
+
+NASDAQ = pd.read_csv('/Users/matthewmueller/Desktop/nasdaq_screener_1726641015074.csv')
+ntickers = NASDAQ['Symbol'].tolist()
+ntickers = clean_tickers(ntickers)
+ntickers = ntickers[3500:]
 
 good_returns = []
 good_risk = []
@@ -54,10 +63,11 @@ def getReturns(benchmark, tickers):
         except Exception as e: 
             print(f'Error for {ticker}: {e}')
 
-getReturns(benchmark, tickers)
+getReturns(benchmark, ntickers)
 
-print(f'Good returns: {good_returns}')
-print(f'Good risk: {good_risk}')
+golden = list(set(good_returns).intersection(good_risk))
+
+print(f'Golden: {golden}')
 
 
         
