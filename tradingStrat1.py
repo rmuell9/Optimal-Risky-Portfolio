@@ -24,7 +24,7 @@ tickers = [ticker.replace('.', '-') for ticker in tickers]
 NASDAQ = pd.read_csv('/Users/matthewmueller/Desktop/nasdaq_screener_1726641015074.csv')
 ntickers = NASDAQ['Symbol'].tolist()
 ntickers = clean_tickers(ntickers)
-ntickers = ntickers[3500:]
+ntickers = ntickers[:4100]
 
 good_returns = []
 good_risk = []
@@ -59,6 +59,8 @@ def getReturns(benchmark, tickers):
             p_value = 2 * min(f.cdf(f_stat, dof1, dof2), 1 - f.cdf(f_stat, dof1, dof2))
             if (p_value < alpha) and (YVar < XVar):
                 good_risk.append(ticker)
+            if (ticker in good_returns) and (p_value < alpha) and (YVar > XVar):
+                good_returns.remove(ticker)
         
         except Exception as e: 
             print(f'Error for {ticker}: {e}')
@@ -67,11 +69,8 @@ getReturns(benchmark, ntickers)
 
 golden = list(set(good_returns).intersection(good_risk))
 
+print(f'Good returns: {good_returns}')
+
 print(f'Golden: {golden}')
-
-
-        
-
-
 
     
