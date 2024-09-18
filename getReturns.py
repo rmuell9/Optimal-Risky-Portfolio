@@ -20,6 +20,7 @@ returns = ((adj_close_df / adj_close_df.shift(1)) -1) * 100
 returns = returns.dropna()
 X = tuple(returns[benchmark].round(6))
 
+
 print(X)
 
 
