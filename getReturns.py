@@ -1,7 +1,7 @@
 import yfinance as yf, pandas as pd, pandas_market_calendars as mcal
 
 nyse = mcal.get_calendar('NYSE')
-benchmark = 'SPY'
+benchmark = 'TSLA'
 
 today = pd.Timestamp.today()
 start_date = today - pd.Timedelta(days=15)
@@ -16,5 +16,10 @@ adj_close_df = pd.DataFrame()
 data = yf.download(benchmark, start = last_10_trading_days[0], end = today)
 adj_close_df[benchmark] = data['Adj Close']
 
-print(adj_close_df)
+returns = ((adj_close_df / adj_close_df.shift(1)) -1) * 100
+returns = returns.dropna()
+X = tuple(returns[benchmark].round(6))
+
+print(X)
+
 
